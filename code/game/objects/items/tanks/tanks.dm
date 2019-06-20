@@ -126,6 +126,8 @@
 	user.visible_message("<span class='suicide'>[user] is putting [src]'s valve to [user.p_their()] lips! It looks like [user.p_theyre()] trying to commit suicide!</span>")
 	playsound(loc, 'sound/effects/spray.ogg', 10, 1, -3)
 	if (!QDELETED(H) && air_contents && air_contents.return_pressure() >= 1000)
+		H.set_suicide(TRUE)
+		H.suicide_log()
 		for(var/obj/item/W in H)
 			H.dropItemToGround(W)
 			if(prob(50))
@@ -138,6 +140,7 @@
 		H.spawn_gibs()
 		H.spill_organs()
 		H.spread_bodyparts()
+		return MANUAL_SUICIDE
 
 	return (BRUTELOSS)
 
