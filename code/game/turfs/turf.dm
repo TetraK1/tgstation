@@ -190,11 +190,7 @@
 		return TRUE
 	else if(can_have_cabling() && istype(C, /obj/item/stack/pipe_cleaner_coil))
 		var/obj/item/stack/pipe_cleaner_coil/coil = C
-		for(var/obj/structure/pipe_cleaner/LC in src)
-			if(!LC.d1 || !LC.d2)
-				LC.attackby(C, user)
-				return
-		coil.place_turf(src, user)
+		coil.click_turf(src, user)
 		return TRUE
 
 	else if(istype(C, /obj/item/twohanded/rcl))

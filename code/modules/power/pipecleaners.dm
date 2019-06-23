@@ -133,21 +133,12 @@ By design, d1 is the smallest direction and d2 is the highest
 	var/turf/T = get_turf(src)
 	if(T.intact)
 		return
-	if(W.tool_behaviour == TOOL_WIRECUTTER)
+	if(W.tool_behaviour == TOOL_WIRECUTTER || istype(W, /obj/item/stack/pipe_cleaner_coil/cyborg))
 		user.visible_message("[user] cuts the pipe cleaner.", "<span class='notice'>You cut the pipe cleaner.</span>")
 		stored.add_fingerprint(user)
 		investigate_log("was cut by [key_name(usr)] in [AREACOORD(src)]", INVESTIGATE_WIRES)
 		deconstruct()
 		return
-
-	else if(istype(W, /obj/item/stack/pipe_cleaner_coil))
-		var/obj/item/stack/pipe_cleaner_coil/coil = W
-		if (coil.get_amount() < 1)
-			to_chat(user, "<span class='warning'>Not enough pipe cleaner!</span>")
-			return
-		coil.pipe_cleaner_join(src, user)
-
-	add_fingerprint(user)
 
 /obj/structure/pipe_cleaner/attackby(obj/item/W, mob/user, params)
 	handlecable(W, user, params)
@@ -264,6 +255,17 @@ By design, d1 is the smallest direction and d2 is the highest
 /obj/item/stack/pipe_cleaner_coil/proc/get_new_pipe_cleaner(location)
 	var/path = /obj/structure/pipe_cleaner
 	return new path(location, item_color)
+
+/obj/item/stack/pipe_cleaner_coil/proc/click_turf(turf/T, mob/user, dirnew)
+	for(var/obj/structure/pipe_cleaner/LC in T)
+		if(!LC.d1 || !LC.d2)
+			if (get_amount() < 1)
+				to_chat(user, "<span class='warning'>Not enough pipe cleaner!</span>")
+				return
+			pipe_cleaner_join(LC, user)
+			return
+
+	place_turf(T, user, dirnew)
 
 // called when pipe_cleaner_coil is clicked on a turf
 /obj/item/stack/pipe_cleaner_coil/proc/place_turf(turf/T, mob/user, dirnew)
